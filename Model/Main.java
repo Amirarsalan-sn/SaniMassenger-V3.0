@@ -12,7 +12,7 @@ public class Main extends Application {
     public void start(Stage primaryStage) throws Exception{
         PageLoader.setStage(primaryStage);
         PageLoader.load("beginning");
-        /* #36454F*/
+        /* #36454F*/ /*#ffdb11*/
     }
 
 

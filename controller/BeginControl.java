@@ -1,6 +1,7 @@
 package controller;
 
 import Model.Connection;
+import Model.PageLoader;
 import javafx.animation.FadeTransition;
 import javafx.animation.PauseTransition;
 import javafx.animation.TranslateTransition;
@@ -11,13 +12,15 @@ import javafx.scene.control.Label;
 import javafx.scene.image.ImageView;
 import javafx.util.Duration;
 
+import java.io.IOException;
+
 public class BeginControl {
     public ImageView beginImage;
     public ImageView saniImage;
     public Label welcome;
 
     @FXML
-    public void initialize() {
+    public void initialize() throws IOException {
         fadeIn(beginImage);
         fadeIn(saniImage);
         fadeIn(welcome);
@@ -34,8 +37,13 @@ public class BeginControl {
         pauseTransition.setOnFinished(e -> {
             if(!Connection.connect(null,0)){
                 connectionFailed();
+                welcome.setText("    connection failed . . .");
             } else {
-                //page loader ....
+                try {
+                    PageLoader.load("loginPage");
+                } catch (IOException ioException) {
+                    System.out.println(ioException.getMessage());
+                }
             }
         });
         pauseTransition.play();
