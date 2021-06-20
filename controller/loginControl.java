@@ -1,16 +1,12 @@
 package controller;
 
-import Model.Connection;
-import Model.LoginMessage;
-import javafx.animation.FadeTransition;
+import Model.*;
 import javafx.event.ActionEvent;
-import javafx.fxml.FXML;
-import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.image.ImageView;
-import javafx.util.Duration;
 
-import java.net.ConnectException;
+import java.io.IOException;
+
 
 public class loginControl {
     public ImageView saniImage;
@@ -21,20 +17,42 @@ public class loginControl {
     public Label WrongPass;
     public Button signInButton;
     public PasswordField passField;
+    /** for the time you click the log in button multiple times */
+    private boolean loginClicked = false;
 
 
-    public void logIn(ActionEvent actionEvent) {
-        if (!Connection.send(new LoginMessage(username.isVisible() ? username.getText() : passField.getText()
-                , password.getText()))) {
-            Alert alert = new Alert(Alert.AlertType.ERROR);
-            alert.setContentText("""
-                    Failed to send your info to server :
-                    1. Check your internet connection .
-                    2. Try to send again .
-                    3. Close the program and start it again later .
-                    """);
-            alert.show();
+    public void logIn(ActionEvent actionEvent) { // remember
+        if(!loginClicked) {
+            loginClicked = true;
+            WrongPass.setVisible(false);
+            if (!Connection.send(new LoginMessage(username.isVisible() ? username.getText() : passField.getText()
+                    , password.getText()))) {
+                clearTextFields();
+                showAlert("""
+                Failed to send your info to server :
+                1. Check your internet connection .
+                2. Try to send again .
+                3. Close the program and start it again later .
+                """);
+            } else {
+                try {
+                    Message message = Connection.receive();
+                    handle(message);
+                }catch (Exception e) {
+                    showAlert(e.getMessage());
+                }
+            }
+            loginClicked = false;
         }
+    }
+
+    private void showAlert(String s) {
+        Alert alert = new Alert(Alert.AlertType.ERROR);
+        alert.setContentText(s);
+        alert.show();
+    }
+
+    private void clearTextFields() {
         username.setText("");
         passField.setText("");
         password.setText("");
@@ -54,31 +72,16 @@ public class loginControl {
         }
     }
 
-    public void singIn(ActionEvent actionEvent) {
-
+    public void singIn(ActionEvent actionEvent) throws IOException {
+        PageLoader.load("signinPage");
     }
 
-    public <T extends Node> void fadeIn(double milliTime, T... nodes) {
-        for (Node node : nodes) {
-            FadeTransition fadeTransition = new FadeTransition(Duration.millis(milliTime));
-            fadeTransition.setNode(node);
-            fadeTransition.setFromValue(1.0);
-            fadeTransition.setToValue(0.0);
-            fadeTransition.play();
+    public void handle(Message message) {
+        if(((BooleanMessage) message).value) {
+            //load main page
+        } else {
+            WrongPass.setVisible(true);
+            clearTextFields();
         }
-    }
-
-    public <T extends Node> void fadeOut(double milliTime, T... nodes) {
-        for (Node node : nodes) {
-            FadeTransition fadeTransition = new FadeTransition(Duration.millis(milliTime));
-            fadeTransition.setNode(node);
-            fadeTransition.setFromValue(0.0);
-            fadeTransition.setToValue(1.0);
-            fadeTransition.play();
-        }
-    }
-
-    public <T extends Node> void move(T node, int pos) {
-
     }
 }

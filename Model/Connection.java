@@ -1,9 +1,6 @@
 package Model;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.ObjectOutputStream;
-import java.io.OutputStream;
+import java.io.*;
 import java.net.Socket;
 
 public class Connection {
@@ -11,7 +8,7 @@ public class Connection {
     private static InputStream socketInput ;
     private static OutputStream socketOutput ;
 
-    public static boolean connect(String ip , int port){
+    public static boolean connect(String ip , int port) {
         try {
             socket = new Socket(ip , port);
             socketOutput = socket.getOutputStream();
@@ -26,9 +23,20 @@ public class Connection {
         try {
             ObjectOutputStream outputStream = new ObjectOutputStream(socketOutput);
             outputStream.writeObject(message);
-        } catch (Exception e) {
+        } catch (IOException e) {
             return false;
         }
         return true;
+    }
+
+    public static Message receive() throws Exception{
+        Message message = null;
+        try {
+            ObjectInputStream inputStream = new ObjectInputStream(socketInput);
+            message = ((Message) inputStream.readObject());
+        }catch (Exception e ) {
+            throw new Exception(e.getMessage());
+        }
+        return message;
     }
 }
