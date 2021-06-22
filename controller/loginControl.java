@@ -4,6 +4,7 @@ import Model.*;
 import javafx.event.ActionEvent;
 import javafx.scene.control.*;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.MouseEvent;
 
 import java.io.IOException;
 
@@ -17,6 +18,7 @@ public class loginControl {
     public Label WrongPass;
     public Button signInButton;
     public PasswordField passField;
+    public ImageView refreshIcon;
     /** for the time you click the log in button multiple times */
     private boolean loginClicked = false;
 
@@ -25,37 +27,31 @@ public class loginControl {
         if(!loginClicked) {
             loginClicked = true;
             WrongPass.setVisible(false);
-            if (!Connection.send(new LoginMessage(username.isVisible() ? username.getText() : passField.getText()
-                    , password.getText()))) {
-                clearTextFields();
-                showAlert("""
-                Failed to send your info to server :
-                1. Check your internet connection .
-                2. Try to send again .
-                3. Close the program and start it again later .
-                """);
-            } else {
-                try {
-                    Message message = Connection.receive();
-                    handle(message);
-                }catch (Exception e) {
-                    showAlert(e.getMessage());
-                }
-            }
+            Message sendResult = Connection.send(new LoginMessage(username.getText() ,
+                    password.isVisible() ? password.getText() : passField.getText()));
+            handle(sendResult);
+            clearTextFields();
+            handle(Connection.receive());
             loginClicked = false;
         }
     }
 
-    private void showAlert(String s) {
+    private void showConfirmAlert(String s) {
+        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+        alert.setContentText(s);
+        alert.show();
+    }
+
+    private void showErrorAlert(String s) {
         Alert alert = new Alert(Alert.AlertType.ERROR);
         alert.setContentText(s);
         alert.show();
     }
 
     private void clearTextFields() {
-        username.setText("");
-        passField.setText("");
-        password.setText("");
+        username.clear();
+        passField.clear();
+        password.clear();
     }
 
     public void showPassword(ActionEvent actionEvent) {
@@ -77,11 +73,35 @@ public class loginControl {
     }
 
     public void handle(Message message) {
-        if(((BooleanMessage) message).value) {
-            //load main page
-        } else {
-            WrongPass.setVisible(true);
-            clearTextFields();
+        switch (message.getClass().getSimpleName()) {
+            case "BooleanMessage" : {
+                if (((BooleanMessage) message).value) {
+                    showConfirmAlert("You have logged in successfully .");
+                } else {
+                    WrongPass.setVisible(true);
+                    clearTextFields();
+                }
+                break;
+            }
+            case "ErrorMessage" : {
+                showErrorAlert(((ErrorMessage) message).message);
+                break;
+            }
         }
+    }
+
+    public void refresh(MouseEvent mouseEvent) throws IOException {
+        if(!Connection.isOpen()) {
+            Connection.connect();
+        }
+        PageLoader.load("loginPage");
+    }
+
+    public void cursorToHand(MouseEvent mouseEvent) {
+        PageLoader.cursorToHand();
+    }
+
+    public void cursorToDefault(MouseEvent mouseEvent) {
+        PageLoader.cursorToDefault();
     }
 }

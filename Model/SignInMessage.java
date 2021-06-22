@@ -1,6 +1,8 @@
 package Model;
 
-public class SignInMessage {
+public class SignInMessage extends Message{
+    public static final long serialVersionUID = 32L;
+
     public final String uName;
     public final String passWord ;
     public final String name ;

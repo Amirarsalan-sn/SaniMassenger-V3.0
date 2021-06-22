@@ -6,7 +6,9 @@ import java.io.*;
 import java.net.Socket;
 import java.util.*;
 
+
 public class Server implements Runnable {
+    public static final String SERVER_SIDE_PERSONS = "/home/amir/IdeaProjects/untitled2/src/ServerSide/Persons";
     private Socket socket;
     private InputStream socketInput;
     private OutputStream socketOutput;
@@ -23,10 +25,10 @@ public class Server implements Runnable {
     public Server(Socket socket) {
         this.socket = socket;
         try {
-            this.socketInput = socket.getInputStream();
             this.socketOutput = socket.getOutputStream();
+            this.socketInput = socket.getInputStream();
             objIn = new ObjectInputStream(socketInput);
-            objOut = new ObjectOutputStream(objOut);
+            objOut = new ObjectOutputStream(socketOutput);
         } catch (IOException e) {
             throw new AssertionError("Unable to establish connection : " + e.getMessage());
         }
@@ -36,36 +38,45 @@ public class Server implements Runnable {
     public void run() {
         Message currentMessage = null;
         System.err.println("client : " + socket.getInetAddress() + " connected .");
-        Label:
         while (true) {
             try {
                 currentMessage = ((Message) objIn.readObject());
             } catch (IOException | ClassNotFoundException e) {
-                System.err.println("Error case : " + e.getMessage() + " From Client " + socket.getInetAddress());
+                throw new AssertionError("Couldn't send message to client " + socket.getInetAddress()
+                        + " " + e.getMessage());
             }
             if (currentMessage != null) {
-                switch (currentMessage.getClass().getSimpleName()) {
-                    case "LoginMessage": {
-                        LoginMessage loginMessage = ((LoginMessage) currentMessage);
-                        Message mess;
-                        mess = uPassCheck(loginMessage);
-                        send(mess);
-                        break;
-                    }
-                    case "SignInMessage": {
-                        SignInMessage signInMessage = ((SignInMessage) currentMessage);
-                        Message mess;
-                        mess = signInCheck(signInMessage);
-                        send(mess);
-                        break;
-                    }
-                    case "CloseMessage": {
-                        break Label;
-                    }
-                }
+                if (handle(currentMessage))
+                    break;
             }
         }
         closeResources();
+    }
+
+    private boolean handle(Message currentMessage) {
+        switch (currentMessage.getClass().getSimpleName()) {
+            case "LoginMessage": {
+                LoginMessage loginMessage = ((LoginMessage) currentMessage);
+                Message mess;
+                mess = uPassCheck(loginMessage);
+                send(mess);
+                break;
+            }
+            case "SignInMessage": {
+                SignInMessage signInMessage = ((SignInMessage) currentMessage);
+                Message mess;
+                mess = signInCheck(signInMessage);
+                send(mess);
+                break;
+            }
+            case "CheckMessage" : {
+                send(new CheckMessage());
+            }
+            case "CloseMessage": {
+                return true;
+            }
+        }
+        return false;
     }
 
     private Message signInCheck(SignInMessage signInMessage) {
@@ -76,13 +87,11 @@ public class Server implements Runnable {
         if (person.isPresent()) {
             return new ErrorMessage("User : " + uName + " already has an account .");
         }
-        try (Formatter formatter = new Formatter("ServerSide/Persons" + "/" + uName + ".txt")) {
+        try (Formatter formatter = new Formatter(SERVER_SIDE_PERSONS + "/" + uName + ".txt")) {
             for (String data :
                     clientData) {
-                if (data != null) {
-                    formatter.format(data);
-                    formatter.flush();
-                }
+                formatter.format("%s\n", data);
+                formatter.flush();
             }
         } catch (FileNotFoundException e) {
             throw new AssertionError("Unable to create a Date file for " + uName + " : " + e.getMessage());
@@ -111,7 +120,7 @@ public class Server implements Runnable {
     }
 
     private Optional<File> findPerson(String uName) {
-        File personDir = new File("ServerSide/Persons");
+        File personDir = new File(SERVER_SIDE_PERSONS);
         List<File> persons = Arrays.asList(personDir.listFiles());
         return persons.stream().filter(f -> f.getName().equals(uName + ".txt")).findFirst();
     }
@@ -125,7 +134,6 @@ public class Server implements Runnable {
         }
     }
 
-
     private void closeResources() {
         try {
             objOut.close();
@@ -138,4 +146,5 @@ public class Server implements Runnable {
             /*ignore*/
         }
     }
+
 }

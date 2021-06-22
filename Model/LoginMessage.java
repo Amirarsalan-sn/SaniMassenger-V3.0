@@ -1,8 +1,8 @@
 package Model;
 
-import java.io.Serializable;
+public class LoginMessage extends Message  {
+    public static final long serialVersionUID = 31L ;
 
-public class LoginMessage implements Message , Serializable {
     public final String  Uname ;
     public final String Pass ;
 

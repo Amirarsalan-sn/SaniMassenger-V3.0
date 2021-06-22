@@ -24,9 +24,9 @@ public class BeginControl {
         fadeIn(beginImage);
         fadeIn(saniImage);
         fadeIn(welcome);
-        playNode(beginImage,-200);
+        playNode(beginImage, -200);
         PauseTransition pauseTransition = new PauseTransition(Duration.seconds(2));
-        pauseTransition.setOnFinished(e -> playNode(saniImage,-10));
+        pauseTransition.setOnFinished(e -> playNode(saniImage, -10));
         pauseTransition.play();
         pauseTransition = new PauseTransition(Duration.seconds(4));
         pauseTransition.setOnFinished(e -> {
@@ -35,14 +35,14 @@ public class BeginControl {
         pauseTransition.play();
         pauseTransition = new PauseTransition(Duration.seconds(8));
         pauseTransition.setOnFinished(e -> {
-            if(!Connection.connect(null,0)){
+            if (!Connection.connect()) {
                 connectionFailed();
                 welcome.setText("    connection failed . . .");
             } else {
                 try {
                     PageLoader.load("loginPage");
                 } catch (IOException ioException) {
-                    System.out.println(ioException.getMessage());
+                    ioException.printStackTrace();
                 }
             }
         });
@@ -61,7 +61,7 @@ public class BeginControl {
         fadeTransition.play();
     }
 
-    private<T extends Node> void playNode(T node, int pos) {
+    private <T extends Node> void playNode(T node, int pos) {
         TranslateTransition translateTransition = new TranslateTransition();
         FadeTransition fadeTransition = new FadeTransition();
         fadeTransition.setNode(node);
@@ -75,7 +75,7 @@ public class BeginControl {
         translateTransition.play();
     }
 
-    public<T extends Node> void fadeIn(T node){
+    public <T extends Node> void fadeIn(T node) {
         FadeTransition fadeTransition = new FadeTransition();
         fadeTransition.setDuration(Duration.millis(5));
         fadeTransition.setNode(node);
@@ -84,7 +84,7 @@ public class BeginControl {
         fadeTransition.play();
     }
 
-    public<T extends Node> void fadeIn(T node , int milliTime){
+    public <T extends Node> void fadeIn(T node, int milliTime) {
         FadeTransition fadeTransition = new FadeTransition();
         fadeTransition.setDuration(Duration.millis(milliTime));
         fadeTransition.setNode(node);
@@ -93,7 +93,7 @@ public class BeginControl {
         fadeTransition.play();
     }
 
-    public<T extends Node> void fadeOut(T node, int milliTime){
+    public <T extends Node> void fadeOut(T node, int milliTime) {
         FadeTransition fadeTransition = new FadeTransition();
         fadeTransition.setDuration(Duration.millis(milliTime));
         fadeTransition.setNode(node);
@@ -102,7 +102,7 @@ public class BeginControl {
         fadeTransition.play();
     }
 
-    public void connectionFailed () {
+    public void connectionFailed() {
         Alert alert = new Alert(Alert.AlertType.ERROR);
         alert.setContentText("""
                 Failed to connect :\s
