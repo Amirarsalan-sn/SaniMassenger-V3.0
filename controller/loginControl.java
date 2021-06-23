@@ -69,7 +69,7 @@ public class loginControl {
     }
 
     public void singIn(ActionEvent actionEvent) throws IOException {
-        PageLoader.load("signinPage");
+       new PageLoader().load("signinPage");
     }
 
     public void handle(Message message) {
@@ -94,7 +94,7 @@ public class loginControl {
         if(!Connection.isOpen()) {
             Connection.connect();
         }
-        PageLoader.load("loginPage");
+        new PageLoader().load("loginPage");
     }
 
     public void cursorToHand(MouseEvent mouseEvent) {

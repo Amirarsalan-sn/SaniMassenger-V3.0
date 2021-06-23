@@ -22,11 +22,30 @@ public class PageLoader {
         primaryStage.getIcons().add(new Image("workSpace/Logo_images/main.png"));
     }
 
-    public static void load (String url) throws IOException {
-        Parent root = FXMLLoader.load(PageLoader.class.getResource("../View/"+url+".fxml"));
-        scene = new Scene(root, width, height);
+    public void setRoot(String fxml) throws IOException {
+        scene.setRoot(loadFXML(fxml));
+    }
+
+
+    public static Stage getPrimaryStage() {
+        return primaryStage;
+    }
+
+    public Parent loadFXML(String fxml) throws IOException {
+        FXMLLoader fxmlLoader = new FXMLLoader(Main.class.getResource("/View/" + fxml + ".fxml"));
+        return fxmlLoader.load();
+    }
+
+    public void load(String url) throws IOException {
+        scene = new Scene(new PageLoader().loadFXML(url));
         primaryStage.setScene(scene);
         primaryStage.show();
+    }
+
+    public  void load(String url , Object controller) throws IOException {
+        FXMLLoader fxmlLoader = new FXMLLoader(Main.class.getResource("/View/" + url + ".fxml"));
+        fxmlLoader.setController(controller);
+        fxmlLoader.load();
     }
 
     public static void cursorToHand() {

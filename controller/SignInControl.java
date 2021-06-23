@@ -35,7 +35,7 @@ public class SignInControl {
     private boolean signinClicked = false;
 
     public void logIn(ActionEvent actionEvent) throws IOException {
-        PageLoader.load("loginPage");
+        new PageLoader().load("loginPage");
     }
 
     public void signIn(ActionEvent actionEvent) {
@@ -140,7 +140,7 @@ public class SignInControl {
         if (!Connection.isOpen()) {
             Connection.connect();
         }
-        PageLoader.load("signinPage");
+        new PageLoader().load("signinPage");
     }
 
     public void cursorToHand(MouseEvent mouseEvent) {

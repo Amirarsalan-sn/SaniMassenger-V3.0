@@ -11,8 +11,8 @@ public class Main extends Application {
     @Override
     public void start(Stage primaryStage) throws Exception{
         PageLoader.setStage(primaryStage);
-        PageLoader.load("beginning");
-        /* #36454F*/ /*#ffdb11*/
+        new PageLoader().load("mainPage");
+        /* #36454F back color */ /*#ffdb11 gold color */
     }
 
 

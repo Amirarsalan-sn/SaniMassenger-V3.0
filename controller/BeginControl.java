@@ -40,7 +40,7 @@ public class BeginControl {
                 welcome.setText("    connection failed . . .");
             } else {
                 try {
-                    PageLoader.load("loginPage");
+                    new PageLoader().load("loginPage");
                 } catch (IOException ioException) {
                     ioException.printStackTrace();
                 }
