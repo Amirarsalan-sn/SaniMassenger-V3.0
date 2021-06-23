@@ -13,6 +13,7 @@ import javafx.scene.layout.Background;
 import javafx.scene.layout.BackgroundFill;
 import javafx.scene.paint.Color;
 
+import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
 
@@ -43,8 +44,8 @@ public class MainPageControl implements Initializable {
     }
 
 
-    public void menuPage(MouseEvent mouseEvent) {
-
+    public void menuPage(MouseEvent mouseEvent) throws IOException {
+        new PageLoader().load("menuPage");
     }
 
     public void cursorToHand(MouseEvent mouseEvent) {

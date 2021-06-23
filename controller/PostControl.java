@@ -9,6 +9,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
 import javafx.scene.layout.AnchorPane;
 
+import java.awt.event.MouseEvent;
 import java.io.IOException;
 
 public class PostControl {
@@ -52,5 +53,27 @@ public class PostControl {
 
     public void like(ActionEvent actionEvent) {
 
+    }
+
+    public void cursorToHand(MouseEvent mouseEvent) {
+        PageLoader.cursorToHand();
+    }
+
+    public void cursorToDefault(MouseEvent mouseEvent) {
+        PageLoader.cursorToDefault();
+    }
+
+    public void cursorToHand(javafx.scene.input.MouseEvent mouseEvent) {
+        PageLoader.cursorToHand();
+    }
+
+    public void cursorToDefault(javafx.scene.input.MouseEvent mouseEvent) {
+        PageLoader.cursorToDefault();
+    }
+
+    public void otherProfileLoad(javafx.scene.input.MouseEvent mouseEvent) throws IOException {
+        //send and receive person .
+        OtherProfilePage.person = null;
+        new PageLoader().load("otherProfilePage");
     }
 }

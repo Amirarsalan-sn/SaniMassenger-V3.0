@@ -12,7 +12,7 @@ public class Main extends Application {
     public void start(Stage primaryStage) throws Exception{
         PageLoader.setStage(primaryStage);
         new PageLoader().load("mainPage");
-        /* #36454F back color */ /*#ffdb11 gold color */
+        /* #36454F back color */ /*#ffdb11 gold color */ /*  #a1890f dark yellow */
     }
 
 
