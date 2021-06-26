@@ -63,4 +63,8 @@ public class MyProfileControl {
     public void menuLoad(MouseEvent mouseEvent) throws IOException {
         new PageLoader().load("menuPage");
     }
+
+    public void refresh(MouseEvent mouseEvent) {
+
+    }
 }

@@ -1,11 +1,59 @@
 package ServerSide;
 
-public class Person {
-    public final String uname;
-    public final String pass ;
+import Model.Post;
 
-    public Person(String uname, String pass) {
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
+
+public class Person implements Serializable {
+    public static final long serialVersionUID = 4L;
+
+    public final String uname;
+    public final String passWord;
+    public final String name;
+    public final String birthDate;
+    private ArrayList<Post> myPost = new ArrayList<>();
+    private ArrayList<String> followerNames = new ArrayList<>();
+    private ArrayList<String> followingNames = new ArrayList<>();
+
+    public Person(String uname, String passWord, String name, String birthDate) {
         this.uname = uname;
-        this.pass = pass;
+        this.passWord = passWord;
+        this.name = name;
+        this.birthDate = birthDate;
+    }
+
+    public void addPost(Post post) {
+        myPost.add(post);
+    }
+
+    public List<Post> getTwoLastPosts() {
+        int size = myPost.size();
+        return myPost.subList(size-2 , size);
+    }
+
+    public void addFollowerNames(String uname) {
+        followerNames.add(uname);
+    }
+
+    public void addFollowingNames(String uname) {
+        followingNames.add(uname);
+    }
+
+    public String[] getFollowerNames() {
+        return followerNames.toArray(new String[0]);
+    }
+
+    public String[] getFollowingNames() {
+        return followingNames.toArray(new String[0]);
+    }
+
+    public void removeFollowerNames(String uname) {
+        followerNames.remove(uname);
+    }
+
+    public void removeFollowingNames(String uname) {
+        followingNames.remove(uname);
     }
 }

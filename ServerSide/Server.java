@@ -4,7 +4,7 @@ import Model.*;
 
 import java.io.*;
 import java.net.Socket;
-import java.util.*;
+import java.util.ArrayList;
 
 
 public class Server implements Runnable {
@@ -14,6 +14,9 @@ public class Server implements Runnable {
     private OutputStream socketOutput;
     private ObjectInputStream objIn;
     private ObjectOutputStream objOut;
+    private Person currentPerson ;
+    private ArrayList<Person> followers = new ArrayList<>();
+    private ArrayList<Person> following = new ArrayList<>();
 
     /**
      * if one of the getInputStream or getOutputStream operations failed ,
@@ -69,6 +72,11 @@ public class Server implements Runnable {
                 send(mess);
                 break;
             }
+            case "PostRefMessage" : {
+                Post[] posts = getOtherPosts(currentPerson);
+                send(new PostRefMessage(posts));
+                break;
+            }
             case "CheckMessage" : {
                 send(new CheckMessage());
             }
@@ -79,23 +87,25 @@ public class Server implements Runnable {
         return false;
     }
 
+    private Post[] getOtherPosts(Person currentPerson) {
+        ArrayList<Post> posts = new ArrayList<>();
+        for (Person person :
+                following) {
+            posts.addAll(person.getTwoLastPosts());
+        }
+        return posts.toArray(new Post[0]);
+    }
+
     private Message signInCheck(SignInMessage signInMessage) {
         String uName = signInMessage.uName;
-        String[] clientData = {signInMessage.uName, signInMessage.passWord,
-                signInMessage.name, signInMessage.lastName, signInMessage.BirthDate};
-        Optional<File> person = findPerson(uName);
-        if (person.isPresent()) {
+        Person person = Listener.unameToPass.get(uName);
+        if(person != null) {
             return new ErrorMessage("User : " + uName + " already has an account .");
         }
-        try (Formatter formatter = new Formatter(SERVER_SIDE_PERSONS + "/" + uName + ".txt")) {
-            for (String data :
-                    clientData) {
-                formatter.format("%s\n", data);
-                formatter.flush();
-            }
-        } catch (FileNotFoundException e) {
-            throw new AssertionError("Unable to create a Date file for " + uName + " : " + e.getMessage());
-        }
+        person = new Person(uName , signInMessage.passWord,signInMessage.name + " " + signInMessage.lastName,
+                signInMessage.BirthDate);
+        Listener.unameToPass.put(uName , person);
+        this.currentPerson = person;
         return new ConfirmMessage("""
                 You have signed in successfully .
                 Welcome to SaniMessenger V3.0 .
@@ -103,27 +113,42 @@ public class Server implements Runnable {
     }
 
     private Message uPassCheck(LoginMessage loginMessage) {
-        Optional<File> person = findPerson(loginMessage.Uname);
-        if (person.isPresent()) {
-            File personFile = person.get();
-            try (Scanner scanner = new Scanner(personFile)) {
-                scanner.nextLine();
-                String pass = scanner.nextLine();
-                if (pass.equals(loginMessage.Pass)) {
-                    return new BooleanMessage(true);
-                }
-            } catch (FileNotFoundException e) {
-                throw new AssertionError("there is a problem with opening the Client data file : " + e.getMessage());
-            }
+        Person person = Listener.unameToPass.get(loginMessage.Uname);
+        if(person == null || !person.passWord.equals(loginMessage.Pass)) {
+            return new BooleanMessage(false);
         }
-        return new BooleanMessage(false);
+        this.currentPerson = person;
+        loadList(person);
+        return new BooleanMessage(true);
     }
 
-    private Optional<File> findPerson(String uName) {
-        File personDir = new File(SERVER_SIDE_PERSONS);
-        List<File> persons = Arrays.asList(personDir.listFiles());
-        return persons.stream().filter(f -> f.getName().equals(uName + ".txt")).findFirst();
+    private void loadList(Person person) {
+        loadFollowers(person) ;
+        loadFollowings(person);
     }
+
+    private void loadFollowings(Person person) {
+        for (String uname :
+                person.getFollowingNames()) {
+            Person followingPerson = Listener.unameToPass.get(uname);
+            if(followingPerson != null)
+                following.add(followingPerson);
+            else
+                person.removeFollowingNames(uname);
+        }
+    }
+
+    private void loadFollowers(Person person) {
+        for (String uname :
+                person.getFollowerNames()) {
+            Person followerPerson = Listener.unameToPass.get(uname);
+            if(followerPerson != null)
+                followers.add(followerPerson);
+            else
+                person.removeFollowerNames(uname);
+        }
+    }
+
 
     private void send(Message message) {
         try {

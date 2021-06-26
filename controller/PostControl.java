@@ -1,7 +1,7 @@
 package controller;
 
-import Model.PageLoader;
-import Model.Post;
+import Model.*;
+import ServerSide.Person;
 import javafx.event.ActionEvent;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
@@ -25,10 +25,14 @@ public class PostControl {
     public TextArea postContext;
     public AnchorPane postBase;
     private Post post ;
+    private int likes ;
+    private int reposts ;
 
-    public PostControl(Post post) throws IOException {
+    public  PostControl(Post post) throws IOException {
         new PageLoader().load("postPage",this);
         this.post = post;
+        likes = post.getLike();
+        reposts = post.getRepost();
     }
 
     public AnchorPane init() {
@@ -37,22 +41,26 @@ public class PostControl {
         author.setText(post.author);
         date.setText(post.date);
         postContext.setText(post.context);
-        repostNumber.setText(post.getRepost());
-        likeNumber.setText(post.getLike());
+        repostNumber.setText(String.valueOf(likes));
+        likeNumber.setText(String.valueOf(reposts));
         return postBase;
     }
 
 
     public void repost(ActionEvent actionEvent) {
-
+        Connection.send(new RepostMessage(post.author , post.localDateTime));
+        reposts++;
+        repostNumber.setText(String.valueOf(reposts));
     }
 
-    public void comment(ActionEvent actionEvent) {
-
+    public void comment(ActionEvent actionEvent) throws IOException {
+        new PageLoader().load("commentPage" , new CommentPageControl(post));
     }
 
     public void like(ActionEvent actionEvent) {
-
+        Connection.send(new LikeMessage(post.author , post.localDateTime));
+        likes++;
+        likeNumber.setText(String.valueOf(likes));
     }
 
     public void cursorToHand(MouseEvent mouseEvent) {
@@ -72,8 +80,9 @@ public class PostControl {
     }
 
     public void otherProfileLoad(javafx.scene.input.MouseEvent mouseEvent) throws IOException {
-        //send and receive person .
-        OtherProfilePage.person = null;
+        Connection.send(new ProfileMessage(post.author , null));
+        Person profile = ((ProfileMessage) Connection.receive()).profile;
+        OtherProfilePageControl.person = profile;
         new PageLoader().load("otherProfilePage");
     }
 }

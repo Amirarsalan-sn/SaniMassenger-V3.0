@@ -1,18 +1,31 @@
 package Model;
 
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.LocalTime;
+import ServerSide.Person;
+
+import java.io.*;
+import java.util.*;
+
 
 public class test {
     public static void main(String[] args) {
-        LocalDateTime localDateTime = LocalDateTime.now();
-        System.out.println(localDateTime);
-        LocalDate localDate = LocalDate.now();
-        LocalTime localTime = LocalTime.now();
-        String time = localDate + " "  + localTime ;
-        time =  time.replaceAll("-" , "/");
-        time =  time.replaceAll(":\\d\\d\\.\\d+" , "");
-        System.out.println(time);
+        List<Post> posts = new ArrayList<>();
+        Collections.addAll(posts , new Post("1" , "1" , "1"), new Post("2" , "2" , "2") ,new Post("3" , "3" , "3") , new Post("4" , "4" , "4"));
+        List<Post> posts1 = posts.subList(posts.size()-2 , posts.size());
+        /*try(FileOutputStream outputStream = new FileOutputStream("C:\\Users\\Arsalan\\IdeaProjects\\SaniMassengerV3\\src\\Model\\sampleMap.txt");
+            ObjectOutputStream objectOutputStream = new ObjectOutputStream(outputStream)) {
+            Person person = new Person("ali" , "1234" , "alavi" , "2001/2/2");
+            objectOutputStream.writeObject(person);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        try(FileInputStream inputStream = new FileInputStream("C:\\Users\\Arsalan\\IdeaProjects\\SaniMassengerV3\\src\\Model\\sampleMap.txt") ;
+            ObjectInputStream objectInputStream = new ObjectInputStream(inputStream)){
+           Person person = ((Person) objectInputStream.readObject());
+            System.out.println(person.passWord);
+        } catch (IOException | ClassNotFoundException e){
+            e.printStackTrace();
+        }*/
+
     }
 }

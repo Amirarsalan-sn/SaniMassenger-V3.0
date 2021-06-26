@@ -1,14 +1,21 @@
 package Model;
 
+import java.io.Serializable;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.concurrent.atomic.AtomicInteger;
 
-public class Post {
+public class Post implements Serializable {
+    public static final long serialVersionUID = 5L ;
+
     public final String author ;
     public final String title ;
     public final String context ;
+    public final LocalDateTime localDateTime = LocalDateTime.now();
     public final String date = now() ;
-    private int likes ;
-    private int reposts ;
+    private AtomicInteger likes = new AtomicInteger(0);
+    private AtomicInteger reposts = new AtomicInteger(0);
+    private ArrayList<Comment> comments ;
 
     public Post(String author, String title, String context) {
         this.author = author;
@@ -16,8 +23,8 @@ public class Post {
         this.context = context;
     }
 
+
     private String now() {
-        LocalDateTime localDateTime = LocalDateTime.now();
         String result = localDateTime.toString();
         result = result.replaceAll("-" , "/");
         result = result.replaceAll(":\\d\\d\\.\\d+" , "");
@@ -25,12 +32,20 @@ public class Post {
         return result;
     }
 
-    public String getLike() {
-        return String.valueOf(likes);
+    public int getLike() {
+        return likes.get();
     }
 
-    public String getRepost() {
-        return String.valueOf(reposts);
+    public int getRepost()
+    {
+        return reposts.get();
     }
 
+    public void like() {
+        likes.addAndGet(1);
+    }
+
+    public void repost() {
+        reposts.addAndGet(1);
+    }
 }
