@@ -1,5 +1,7 @@
 package controller;
 
+import Model.Connection;
+import Model.NewPostMessage;
 import Model.PageLoader;
 import Model.Post;
 import javafx.event.ActionEvent;
@@ -74,7 +76,7 @@ public class NewPostPageControl {
 
     private void surePublish() {
         Post post = new Post(null , postTitle.getText() , postContext.getText());
-        //send
+        Connection.send(new NewPostMessage(post));
         clearTextFields();
     }
 

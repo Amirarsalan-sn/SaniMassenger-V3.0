@@ -15,7 +15,9 @@ import javafx.scene.layout.AnchorPane;
 
 import java.io.IOException;
 import java.net.URL;
+import java.util.List;
 import java.util.ResourceBundle;
+import java.util.stream.Collectors;
 
 public class OtherProfilePageControl implements Initializable {
 
@@ -116,11 +118,13 @@ public class OtherProfilePageControl implements Initializable {
         unfollowButton.setVisible(false);
     }
 
-    public void showFollowers(MouseEvent mouseEvent) {
-
+    public void showFollowers(MouseEvent mouseEvent) throws IOException {
+        List<FollowerOrFollowing> followData = person.getFollowerNames().stream().map(FollowerOrFollowing::new).collect(Collectors.toList());
+        new PageLoader().load("followerOrFollowingPage" , new FollowerOrFollowingPageControl(person , followData));
     }
 
-    public void showFollowings(MouseEvent mouseEvent) {
-
+    public void showFollowings(MouseEvent mouseEvent) throws IOException {
+        List<FollowerOrFollowing> followData = person.getFollowingNames().stream().map(FollowerOrFollowing::new).collect(Collectors.toList());
+        new PageLoader().load("followerOrFollowingPage" ,  new FollowerOrFollowingPageControl(person , followData));
     }
 }

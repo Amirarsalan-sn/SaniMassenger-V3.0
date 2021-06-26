@@ -57,7 +57,8 @@ public class MenuControl {
     }
 
     private void sureLogOut() {
-        //delete person file .
+        Main.loggedIn = Boolean.FALSE;
+        Main.uName = null ;
         try {
             new PageLoader().load("loginPage");
         } catch (IOException e) {

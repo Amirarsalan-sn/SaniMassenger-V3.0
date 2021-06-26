@@ -44,8 +44,8 @@
                   <Font name="System Bold" size="14.0" />
                </font>
             </Button>
-            <Label layoutX="29.0" layoutY="208.0" text="Followers : " textFill="#ffdb11" />
-            <Label layoutX="252.0" layoutY="208.0" text="Following :" textFill="#ffdb11" />
+            <Label layoutX="29.0" layoutY="208.0" onMouseClicked="#showFollowers" onMouseEntered="#cursorToHand" onMouseExited="#cursorToDefault" text="Followers : " textFill="#ffdb11" />
+            <Label layoutX="252.0" layoutY="208.0" onMouseClicked="#showFollowings" onMouseEntered="#cursorToHand" onMouseExited="#cursorToDefault" text="Following :" textFill="#ffdb11" />
             <Label fx:id="name" layoutX="80.0" layoutY="99.0" prefHeight="26.0" prefWidth="366.0" text=":-))" textFill="WHITE">
                <font>
                   <Font name="System Bold" size="17.0" />

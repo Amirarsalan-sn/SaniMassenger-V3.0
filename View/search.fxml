@@ -8,7 +8,6 @@
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.text.Font?>
 
-
 <AnchorPane prefHeight="575.0" prefWidth="461.0" style="-fx-background-color: #36454F;" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.SearchControl">
    <children>
       <TextField fx:id="searchField" layoutX="45.0" layoutY="68.0" prefHeight="26.0" prefWidth="290.0" promptText="User Name" />

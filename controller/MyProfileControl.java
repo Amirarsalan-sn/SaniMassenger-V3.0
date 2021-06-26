@@ -13,7 +13,9 @@ import javafx.scene.layout.AnchorPane;
 
 import java.io.IOException;
 import java.net.URL;
+import java.util.List;
 import java.util.ResourceBundle;
+import java.util.stream.Collectors;
 
 public class MyProfileControl implements Initializable {
     public Button changeInfoButton;
@@ -112,5 +114,15 @@ public class MyProfileControl implements Initializable {
             birthDate.setText(person.birthDate);
         followerNumber.setText(String.valueOf(person.getFollowersNumber()));
         followingNumber.setText(String.valueOf(person.getFollowingNumber()));
+    }
+
+    public void showFollowers(MouseEvent mouseEvent) throws IOException {
+        List<FollowerOrFollowing> followData = person.getFollowerNames().stream().map(FollowerOrFollowing::new).collect(Collectors.toList());
+        new PageLoader().load("followerOrFollowingPage" , new FollowerOrFollowingPageControl(person , followData));
+    }
+
+    public void showFollowings(MouseEvent mouseEvent) throws IOException {
+        List<FollowerOrFollowing> followData = person.getFollowingNames().stream().map(FollowerOrFollowing::new).collect(Collectors.toList());
+        new PageLoader().load("followerOrFollowingPage" ,  new FollowerOrFollowingPageControl(person , followData));
     }
 }
