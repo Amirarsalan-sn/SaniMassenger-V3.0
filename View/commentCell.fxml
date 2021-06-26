@@ -5,12 +5,11 @@
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.text.Font?>
 
-
-<AnchorPane fx:id="commentBase" prefHeight="239.0" prefWidth="461.0" style="-fx-background-color: #36454F;" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1">
+<AnchorPane fx:id="commentBase" prefHeight="239.0" prefWidth="430.0" style="-fx-background-color: #36454F;" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1">
    <children>
       <TextArea fx:id="commentTextArea" editable="false" layoutX="41.0" layoutY="41.0" prefHeight="154.0" prefWidth="378.0" promptText="comment" style="-fx-border-color: #ffdb11;" />
       <Label layoutX="14.0" layoutY="14.0" text="Author :" textFill="#ffdb11" />
-      <Label fx:id="uName" layoutX="68.0" layoutY="13.0" onMouseClicked="#otherPageLoad" onMouseEntered="#cursorToHand" onMouseExited="#cursorToDefault" prefHeight="18.0" prefWidth="378.0" text="uName" textFill="WHITE">
+      <Label fx:id="uName" layoutX="68.0" layoutY="13.0" prefHeight="18.0" prefWidth="378.0" text="uName" textFill="WHITE">
          <font>
             <Font name="System Bold" size="14.0" />
          </font>

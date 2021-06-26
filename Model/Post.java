@@ -3,6 +3,8 @@ package Model;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Set;
+import java.util.concurrent.ConcurrentSkipListSet;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class Post implements Serializable {
@@ -13,8 +15,8 @@ public class Post implements Serializable {
     public final String context ;
     public final LocalDateTime localDateTime = LocalDateTime.now();
     public final String date = now() ;
-    private AtomicInteger likes = new AtomicInteger(0);
-    private AtomicInteger reposts = new AtomicInteger(0);
+    private Set<String> likes = new ConcurrentSkipListSet<>();
+    private Set<String> reposts = new ConcurrentSkipListSet<>();
     private ArrayList<Comment> comments ;
 
     public Post(String author, String title, String context) {
@@ -32,20 +34,19 @@ public class Post implements Serializable {
         return result;
     }
 
-    public int getLike() {
-        return likes.get();
+    public int getLikes() {
+        return likes.size();
     }
 
-    public int getRepost()
-    {
-        return reposts.get();
+    public int getReposts() {
+        return reposts.size();
     }
 
-    public void like() {
-        likes.addAndGet(1);
+    public void like(String liker) {
+        likes.add(liker);
     }
 
-    public void repost() {
-        reposts.addAndGet(1);
+    public void repost(String reposter) {
+        reposts.add(reposter);
     }
 }

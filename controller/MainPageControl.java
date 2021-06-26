@@ -6,6 +6,7 @@ import Model.Post;
 import Model.PostRefMessage;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
 import javafx.fxml.Initializable;
 import javafx.scene.control.ListView;
 import javafx.scene.image.ImageView;
@@ -55,5 +56,9 @@ public class MainPageControl implements Initializable {
         Post[] refPosts = ((PostRefMessage) Connection.receive()).posts;
         Arrays.sort(refPosts , (post1,post2) -> post1.localDateTime.compareTo(post2.localDateTime));
         postObservableList.setAll(refPosts);
+    }
+
+    public void searchPeople(ActionEvent actionEvent) throws IOException {
+        new PageLoader().load("search");
     }
 }

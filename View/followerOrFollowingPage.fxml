@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.ListView?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+
+
+<AnchorPane prefHeight="575.0" prefWidth="461.0" style="-fx-background-color: #36454F;" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.FollowerOrFollowingPageControl">
+   <children>
+      <ImageView fitHeight="35.0" fitWidth="35.0" layoutX="14.0" layoutY="14.0" onMouseClicked="#back" onMouseEntered="#cursorToHand" onMouseExited="#cursorToDefault" pickOnBounds="true" preserveRatio="true">
+         <image>
+            <Image url="@../workSpace/Logo_images/arrow-back-icon.png" />
+         </image>
+      </ImageView>
+      <ListView fx:id="followersList" layoutY="58.0" prefHeight="516.0" prefWidth="461.0" style="-fx-background-color: #36454F;" />
+   </children>
+</AnchorPane>

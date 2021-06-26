@@ -1,6 +1,10 @@
 package controller;
 
+import Model.Connection;
+import Model.Main;
 import Model.PageLoader;
+import Model.ProfileMessage;
+import ServerSide.Person;
 import javafx.event.ActionEvent;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;

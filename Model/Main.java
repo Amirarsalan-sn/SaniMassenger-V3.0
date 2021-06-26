@@ -4,6 +4,7 @@ import javafx.application.Application;
 import javafx.stage.Stage;
 
 public class Main extends Application {
+    public static Boolean loggedIn = Boolean.FALSE;
     public static String uName ;
     private final int height = 575;
     private final int width = 461;

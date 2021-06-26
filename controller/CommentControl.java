@@ -1,10 +1,8 @@
 package controller;
 
-import Model.Comment;
-import Model.PageLoader;
+import Model.*;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 
 import java.io.IOException;
@@ -27,17 +25,5 @@ public class CommentControl {
         commentTextArea.setText(comment.context);
         date.setText(comment.date);
         return commentBase;
-    }
-
-    public void otherPageLoad(MouseEvent mouseEvent) {
-        // load other's page .
-    }
-
-    public void cursorToHand(MouseEvent mouseEvent) {
-        PageLoader.cursorToHand();
-    }
-
-    public void cursorToDefault(MouseEvent mouseEvent) {
-        PageLoader.cursorToDefault();
     }
 }

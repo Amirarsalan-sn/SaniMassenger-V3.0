@@ -53,24 +53,24 @@
                   <Font name="System Bold" size="17.0" />
                </font>
             </Label>
-            <Button fx:id="changeInfoButton" layoutX="169.0" layoutY="251.0" mnemonicParsing="false" onAction="#changeInfo" onMouseEntered="#cursorToHand" onMouseExited="#cursorToDefault" prefHeight="49.0" prefWidth="122.0" style="-fx-background-color: #a1890f;" text="Follow" textFill="WHITE">
+            <Button fx:id="followButton" layoutX="169.0" layoutY="251.0" mnemonicParsing="false" onAction="#follow" onMouseEntered="#cursorToHand" onMouseExited="#cursorToDefault" prefHeight="49.0" prefWidth="122.0" style="-fx-background-color: #a1890f;" text="Follow" textFill="WHITE">
                <font>
                   <Font name="System Bold" size="16.0" />
                </font>
             </Button>
-            <Button layoutX="169.0" layoutY="250.0" mnemonicParsing="false" onAction="#deleteAccount" onMouseEntered="#cursorToHand" onMouseExited="#cursorToDefault" prefHeight="50.0" prefWidth="122.0" style="-fx-background-color: #a1890f;" text="Unfollow" textFill="WHITE" visible="false">
+            <Button fx:id="unfollowButton" layoutX="169.0" layoutY="250.0" mnemonicParsing="false" onAction="#unfollow" onMouseEntered="#cursorToHand" onMouseExited="#cursorToDefault" prefHeight="50.0" prefWidth="122.0" style="-fx-background-color: #a1890f;" text="Unfollow" textFill="WHITE" visible="false">
                <font>
                   <Font name="System Bold" size="14.0" />
                </font>
             </Button>
-            <Label layoutX="18.0" layoutY="218.0" text="Followers : " textFill="#ffdb11" />
-            <Label layoutX="278.0" layoutY="218.0" text="Following :" textFill="#ffdb11" />
+            <Label layoutX="18.0" layoutY="218.0" onMouseClicked="#showFollowers" onMouseEntered="#cursorToHand" onMouseExited="#cursorToDefault" text="Followers : " textFill="#ffdb11" />
+            <Label layoutX="278.0" layoutY="218.0" onMouseClicked="#showFollowings" onMouseEntered="#cursorToHand" onMouseExited="#cursorToDefault" text="Following :" textFill="#ffdb11" />
             <Label fx:id="followerNumber" layoutX="79.0" layoutY="218.0" prefHeight="18.0" prefWidth="154.0" text="number" textFill="WHITE" />
             <Label fx:id="followingNumber" layoutX="341.0" layoutY="218.0" prefHeight="18.0" prefWidth="115.0" text="number" textFill="WHITE" />
          </children></AnchorPane>
     <AnchorPane fx:id="otherPostsBase" minHeight="0.0" minWidth="0.0" prefHeight="100.0" prefWidth="160.0">
          <children>
-            <ListView layoutX="-1.0" prefHeight="568.0" prefWidth="461.0" />
+            <ListView fx:id="postList" layoutX="-1.0" prefHeight="568.0" prefWidth="461.0" style="-fx-background-color: #36454F;" />
          </children></AnchorPane>
   </items>
 </SplitPane>

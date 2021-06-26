@@ -41,12 +41,12 @@ public class Person implements Serializable {
         followingNames.add(uname);
     }
 
-    public String[] getFollowerNames() {
-        return followerNames.toArray(new String[0]);
+    public List<String> getFollowerNames() {
+        return new ArrayList<>(followerNames);
     }
 
-    public String[] getFollowingNames() {
-        return followingNames.toArray(new String[0]);
+    public List<String> getFollowingNames() {
+        return new ArrayList<>(followingNames);
     }
 
     public void removeFollowerNames(String uname) {
@@ -56,4 +56,16 @@ public class Person implements Serializable {
     public void removeFollowingNames(String uname) {
         followingNames.remove(uname);
     }
-}
+
+    public int getFollowersNumber(){
+        return followerNames.size();
+    }
+
+    public int getFollowingNumber() {
+        return followingNames.size();
+    }
+
+    public List<Post> getPosts() {
+        return new ArrayList<>(myPost);
+    }
+ }

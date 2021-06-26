@@ -25,14 +25,10 @@ public class PostControl {
     public TextArea postContext;
     public AnchorPane postBase;
     private Post post ;
-    private int likes ;
-    private int reposts ;
 
     public  PostControl(Post post) throws IOException {
         new PageLoader().load("postPage",this);
         this.post = post;
-        likes = post.getLike();
-        reposts = post.getRepost();
     }
 
     public AnchorPane init() {
@@ -41,16 +37,15 @@ public class PostControl {
         author.setText(post.author);
         date.setText(post.date);
         postContext.setText(post.context);
-        repostNumber.setText(String.valueOf(likes));
-        likeNumber.setText(String.valueOf(reposts));
+        repostNumber.setText(String.valueOf(post.getReposts()));
+        likeNumber.setText(String.valueOf(post.getLikes()));
         return postBase;
     }
 
 
     public void repost(ActionEvent actionEvent) {
-        Connection.send(new RepostMessage(post.author , post.localDateTime));
-        reposts++;
-        repostNumber.setText(String.valueOf(reposts));
+        Connection.send(new RepostMessage(Main.uName, post.author , post.localDateTime));
+        repostNumber.setText(String.valueOf(post.getReposts()));
     }
 
     public void comment(ActionEvent actionEvent) throws IOException {
@@ -58,9 +53,8 @@ public class PostControl {
     }
 
     public void like(ActionEvent actionEvent) {
-        Connection.send(new LikeMessage(post.author , post.localDateTime));
-        likes++;
-        likeNumber.setText(String.valueOf(likes));
+        Connection.send(new LikeMessage(Main.uName , post.author , post.localDateTime));
+        likeNumber.setText(String.valueOf(post.getLikes()));
     }
 
     public void cursorToHand(MouseEvent mouseEvent) {
@@ -82,7 +76,6 @@ public class PostControl {
     public void otherProfileLoad(javafx.scene.input.MouseEvent mouseEvent) throws IOException {
         Connection.send(new ProfileMessage(post.author , null));
         Person profile = ((ProfileMessage) Connection.receive()).profile;
-        OtherProfilePageControl.person = profile;
-        new PageLoader().load("otherProfilePage");
+        new PageLoader().load("otherProfilePage" , new OtherProfilePageControl(profile));
     }
 }
