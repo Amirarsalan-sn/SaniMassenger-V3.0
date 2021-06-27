@@ -19,7 +19,11 @@ public class Connection {
             socketInput = socket.getInputStream();
             objOut = new ObjectOutputStream(socketOutput);
             objIn = new ObjectInputStream(socketInput);
-        } catch (IOException e) {
+            if(Main.uName != null) {
+                if(send(new ReConnectMessage(Main.uName)) instanceof ErrorMessage)
+                    return false;
+            }
+        } catch (IOException | NullPointerException e) {
             return false;
         }
         return true;
@@ -33,7 +37,7 @@ public class Connection {
         } catch (InvalidClassException e2) {
             throw new AssertionError("Some thing is wrong with "
                     +message.getClass().getSimpleName() + " : " + e2.getMessage());
-        } catch (IOException e3) {
+        } catch (IOException | NullPointerException e3) {
             return new ErrorMessage("Some thing is wrong with the connection (sockets,internet ...) : "
             + e3.getMessage()+ "\n You can also click on refresh button and try again .");
         }
@@ -53,7 +57,7 @@ public class Connection {
             throw new AssertionError("Something is wrong writing the object headers in stream : " + e3.getMessage());
         }catch (OptionalDataException e4) {
             throw new AssertionError("A primitive data type is sent over the network check it : " + e4.getMessage());
-        }catch (IOException e5) {
+        }catch (IOException | NullPointerException e5) {
             return new ErrorMessage("Something is wrong with Your connection (sockets,internet ...) : "
                     + e5.getMessage() + "\n You can also click on refresh button and try again .");
         }
@@ -67,7 +71,7 @@ public class Connection {
             throw new AssertionError("check the CheckMessage class : " + e.getMessage());
         } catch (NotSerializableException e2) {
             throw new AssertionError("Check Message is not serializable : " + e2.getMessage());
-        } catch (IOException e3) {
+        } catch (IOException | NullPointerException e3) {
             return false;
         }
         try {
@@ -83,7 +87,7 @@ public class Connection {
             throw new AssertionError("A primitive data type is sent over the network check it : " + e4.getMessage());
         } catch (ClassCastException e5) {
             throw new AssertionError("something other than CheckMessage has been sent ");
-        }catch (IOException e6) {
+        }catch (IOException | NullPointerException e6) {
             return false ;
         }
         return true;

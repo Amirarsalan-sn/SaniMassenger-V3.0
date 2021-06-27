@@ -11,8 +11,8 @@ public class Person implements Serializable {
 
     public final String uname;
     public final String passWord;
-    public final String name;
-    public final String birthDate;
+    public String name;
+    public String birthDate;
     private ArrayList<Post> myPost = new ArrayList<>();
     private ArrayList<String> followerNames = new ArrayList<>();
     private ArrayList<String> followingNames = new ArrayList<>();

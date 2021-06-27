@@ -1,10 +1,12 @@
 package controller;
 
 import Model.Connection;
+import Model.Main;
 import Model.PageLoader;
-import Model.SearchMessage;
+import Model.ProfileMessage;
 import ServerSide.Person;
 import javafx.event.ActionEvent;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.input.MouseEvent;
@@ -14,6 +16,11 @@ import java.io.IOException;
 
 public class SearchControl {
 
+    private static final String ERROR_TEXT = """
+            You are not connected to the server .
+            * Check your connection and use refresh icon .
+            * Close the Program and run it again .
+            """;
     public TextField searchField;
     public Label nothing;
     public AnchorPane resultAnchor;
@@ -21,11 +28,33 @@ public class SearchControl {
     public Label name;
     public Label birthDate;
     private Person result ;
+    private boolean connected = true;
 
     public void search(ActionEvent actionEvent) {
-        Connection.send(new SearchMessage(searchField.getText(),null));
-        result = ((SearchMessage) Connection.receive()).result;
-        checkResult();
+        if(checkConnection()) {
+            Connection.send(new ProfileMessage(searchField.getText(), null));
+            try {
+                result = ((ProfileMessage) Connection.receive()).profile;
+            }catch (ClassCastException e) {
+                connected = false;
+                showErrorAlert(ERROR_TEXT);
+            }
+            checkResult();
+        }
+    }
+
+    private boolean checkConnection() {
+        if(connected){
+            return true;
+        }
+        showErrorAlert(ERROR_TEXT);
+        return false;
+    }
+
+    private void showErrorAlert(String errorText) {
+        Alert alert = new Alert(Alert.AlertType.ERROR);
+        alert.setContentText(errorText);
+        alert.show();
     }
 
     private void checkResult() {
@@ -48,10 +77,19 @@ public class SearchControl {
     }
 
     public void refresh(MouseEvent mouseEvent) {
-        // todo
+        if(!Connection.isOpen()){
+            if(!Connection.connect()) {
+                connected = false;
+                return;
+            }
+        }
+        connected = true;
     }
 
     public void otherLoad(MouseEvent mouseEvent) throws IOException {
-        new PageLoader().load("otherProfilePage" , new OtherProfilePageControl(result));
+        if(result.uname.equals(Main.uName))
+            new PageLoader().load("myProfilePage");
+        else
+            new PageLoader().load("otherProfilePage" , new OtherProfilePageControl(result));
     }
 }

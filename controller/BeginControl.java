@@ -1,7 +1,9 @@
 package controller;
 
 import Model.Connection;
+import Model.Main;
 import Model.PageLoader;
+import Model.ReConnectMessage;
 import javafx.animation.FadeTransition;
 import javafx.animation.PauseTransition;
 import javafx.animation.TranslateTransition;
@@ -39,10 +41,18 @@ public class BeginControl {
                 connectionFailed();
                 welcome.setText("    connection failed . . .");
             } else {
-                try {
-                    new PageLoader().load("loginPage");
-                } catch (IOException ioException) {
-                    ioException.printStackTrace();
+                if(Main.uName != null) {
+                    try {
+                        new PageLoader().load("mainPage");
+                    } catch (IOException ioException) {
+                        ioException.printStackTrace();
+                    }
+                } else {
+                    try {
+                        new PageLoader().load("loginPage");
+                    } catch (IOException ioException) {
+                        ioException.printStackTrace();
+                    }
                 }
             }
         });

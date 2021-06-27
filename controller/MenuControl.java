@@ -1,9 +1,6 @@
 package controller;
 
-import Model.Connection;
-import Model.Main;
-import Model.PageLoader;
-import Model.ProfileMessage;
+import Model.*;
 import ServerSide.Person;
 import javafx.event.ActionEvent;
 import javafx.scene.control.Alert;
@@ -57,8 +54,8 @@ public class MenuControl {
     }
 
     private void sureLogOut() {
-        Main.loggedIn = Boolean.FALSE;
         Main.uName = null ;
+        Connection.send(new LogOutMessage());
         try {
             new PageLoader().load("loginPage");
         } catch (IOException e) {

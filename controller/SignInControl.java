@@ -29,6 +29,8 @@ public class SignInControl {
     public PasswordField reEnterPassFeild;
     public TextField birthDate;
     public ImageView refreshIcon;
+
+    private String uName ;
     /**
      * for the time you click the sign in button multiple times repeatedly
      */
@@ -42,8 +44,9 @@ public class SignInControl {
         if (!signinClicked) {
             signinClicked = true;
             if (checkNecessaryFields() && checkPasswordFields() && checkPasswordCorrectness()) {
+                uName = userName.getText();
                 Message sendResult = Connection.send(new SignInMessage(firstName.getText(), lastName.getText(),
-                        birthDate.getText(), userName.getText(), password.isVisible() ? password.getText() : passField.getText()));
+                        birthDate.getText(), uName, password.isVisible() ? password.getText() : passField.getText()));
                 handle(sendResult);
                 clearTextFields();
                 Message respond = Connection.receive();
@@ -71,7 +74,13 @@ public class SignInControl {
                 break;
             }
             case "ConfirmMessage": {
+                Main.uName = uName;
                 showConfirmAlert(((ConfirmMessage) respond).message);
+                try {
+                    new PageLoader().load("mainPage");
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
                 break;
             }
         }

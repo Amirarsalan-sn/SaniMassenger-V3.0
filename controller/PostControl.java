@@ -4,6 +4,7 @@ import Model.*;
 import ServerSide.Person;
 import javafx.event.ActionEvent;
 import javafx.geometry.Pos;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
@@ -75,7 +76,23 @@ public class PostControl {
 
     public void otherProfileLoad(javafx.scene.input.MouseEvent mouseEvent) throws IOException {
         Connection.send(new ProfileMessage(post.author , null));
-        Person profile = ((ProfileMessage) Connection.receive()).profile;
-        new PageLoader().load("otherProfilePage" , new OtherProfilePageControl(profile));
+        try {
+            Person profile = ((ProfileMessage) Connection.receive()).profile;
+            if(profile != null)
+                if(profile.uname.equals(Main.uName))
+                    new PageLoader().load("myProfilePage");
+                else
+                    new PageLoader().load("otherProfilePage" , new OtherProfilePageControl(profile));
+            else
+                showErrorAlert("The user you wanted to visit his(her) profile has deleted his(her) account .");
+        }catch (ClassCastException e) {
+            showErrorAlert("You are disconnected from the server .");
+        }
+    }
+
+    private void showErrorAlert(String s) {
+        Alert alert = new Alert(Alert.AlertType.ERROR);
+        alert.setContentText(s);
+        alert.show();
     }
 }

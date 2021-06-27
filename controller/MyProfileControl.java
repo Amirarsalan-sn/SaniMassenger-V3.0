@@ -18,6 +18,11 @@ import java.util.ResourceBundle;
 import java.util.stream.Collectors;
 
 public class MyProfileControl implements Initializable {
+    private static final String ERROR_TEXT = """
+            You are not connected to the server .
+            * Check your connection and use refresh icon .
+            * Close the Program and run it again .
+            """;
     public Button changeInfoButton;
     public Label name;
     public Label uName;
@@ -32,6 +37,7 @@ public class MyProfileControl implements Initializable {
     public ImageView menuIcon;
     private Person person ;
     private ObservableList<Post> personObservableList;
+    private boolean connected = true;
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
@@ -59,35 +65,58 @@ public class MyProfileControl implements Initializable {
     }
 
     public void deleteAccount(ActionEvent actionEvent) {
-        Alert alert = new Alert(Alert.AlertType.WARNING) ;
-        alert.setTitle("Delete Account ??");
-        alert.setContentText("Are you sure you want to delete your account ??");
-        ButtonType yesButton = ButtonType.YES;
-        ButtonType noButton = ButtonType.NO;
-        alert.getButtonTypes().setAll(yesButton , noButton);
-        alert.showAndWait().ifPresent(clicked -> {
-            if(clicked == ButtonType.YES){
-                Connection.send(new DeleteAccMessage());
-            }else{
-                //do nothing .
-            }
-        });
+        if(checkConnection()) {
+            Alert alert = new Alert(Alert.AlertType.WARNING);
+            alert.setTitle("Delete Account ??");
+            alert.setContentText("Are you sure you want to delete your account ??");
+            ButtonType yesButton = ButtonType.YES;
+            ButtonType noButton = ButtonType.NO;
+            alert.getButtonTypes().setAll(yesButton, noButton);
+            alert.showAndWait().ifPresent(clicked -> {
+                if (clicked == ButtonType.YES) {
+                    Connection.send(new DeleteAccMessage());
+                    Main.uName = null;
+                    try {
+                        new PageLoader().load("loginPage");
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                } else {
+                    //do nothing .
+                }
+            });
+        }
+    }
+
+    private boolean checkConnection() {
+        if(connected)
+            return true;
+        showErrorAlert(ERROR_TEXT);
+        return false;
+    }
+
+    private void showErrorAlert(String errorText) {
+        Alert alert = new Alert(Alert.AlertType.ERROR);
+        alert.setContentText(errorText);
+        alert.show();
     }
 
     public void change(ActionEvent actionEvent) {
-        String newName = nameTextField.getText();
-        String newBirthDate = dateTextField.getText();
-        Connection.send(new ChangeInfoMessage(newName, newBirthDate));
-        changeButton.setVisible(false);
-        changeInfoButton.setVisible(true);
-        if(!newName.equals(""))
-            name.setText(newName);
-        nameTextField.setVisible(false);
-        name.setVisible(true);
-        if(!newBirthDate.equals(""))
-            birthDate.setText(dateTextField.getText());
-        dateTextField.setVisible(false);
-        birthDate.setVisible(true);
+        if(checkConnection()) {
+            String newName = nameTextField.getText();
+            String newBirthDate = dateTextField.getText();
+            Connection.send(new ChangeInfoMessage(newName, newBirthDate));
+            changeButton.setVisible(false);
+            changeInfoButton.setVisible(true);
+            if (!newName.equals(""))
+                name.setText(newName);
+            nameTextField.setVisible(false);
+            name.setVisible(true);
+            if (!newBirthDate.equals(""))
+                birthDate.setText(dateTextField.getText());
+            dateTextField.setVisible(false);
+            birthDate.setVisible(true);
+        }
     }
 
     public void menuLoad(MouseEvent mouseEvent) throws IOException {
@@ -99,11 +128,18 @@ public class MyProfileControl implements Initializable {
     }
 
     private void refresh() {
+        if(!Connection.isOpen()){
+            if (!Connection.connect()) {
+                connected = false;
+                return;
+            }
+        }
         Connection.send(new ProfileMessage(Main.uName , null));
         Person profile = ((ProfileMessage) Connection.receive()).profile;
         person = profile;
         personObservableList.setAll(person.getPosts());
         setTextFields();
+        connected = true;
     }
 
     private void setTextFields() {
@@ -117,12 +153,16 @@ public class MyProfileControl implements Initializable {
     }
 
     public void showFollowers(MouseEvent mouseEvent) throws IOException {
-        List<FollowerOrFollowing> followData = person.getFollowerNames().stream().map(FollowerOrFollowing::new).collect(Collectors.toList());
-        new PageLoader().load("followerOrFollowingPage" , new FollowerOrFollowingPageControl(person , followData));
+        if(checkConnection()) {
+            List<FollowerOrFollowing> followData = person.getFollowerNames().stream().map(FollowerOrFollowing::new).collect(Collectors.toList());
+            new PageLoader().load("followerOrFollowingPage", new FollowerOrFollowingPageControl(person, followData));
+        }
     }
 
     public void showFollowings(MouseEvent mouseEvent) throws IOException {
-        List<FollowerOrFollowing> followData = person.getFollowingNames().stream().map(FollowerOrFollowing::new).collect(Collectors.toList());
-        new PageLoader().load("followerOrFollowingPage" ,  new FollowerOrFollowingPageControl(person , followData));
+        if(checkConnection()) {
+            List<FollowerOrFollowing> followData = person.getFollowingNames().stream().map(FollowerOrFollowing::new).collect(Collectors.toList());
+            new PageLoader().load("followerOrFollowingPage", new FollowerOrFollowingPageControl(person, followData));
+        }
     }
 }

@@ -21,19 +21,30 @@ public class loginControl {
     public ImageView refreshIcon;
     /** for the time you click the log in button multiple times */
     private boolean loginClicked = false;
-
+    private String uName ;
 
     public void logIn(ActionEvent actionEvent) { // remember
         if(!loginClicked) {
             loginClicked = true;
             WrongPass.setVisible(false);
-            Message sendResult = Connection.send(new LoginMessage(username.getText() ,
-                    password.isVisible() ? password.getText() : passField.getText()));
-            handle(sendResult);
-            clearTextFields();
-            handle(Connection.receive());
+            if(checkTextFields()) {
+                uName = username.getText();
+                Message sendResult = Connection.send(new LoginMessage(uName,
+                        password.isVisible() ? password.getText() : passField.getText()));
+                handle(sendResult);
+                clearTextFields();
+                handle(Connection.receive());
+            }
             loginClicked = false;
         }
+    }
+
+    private boolean checkTextFields() {
+        if(username.getText().equals("") || password.getText().equals("")) {
+            showErrorAlert("You must fill all the text fields .");
+            return false;
+        }
+        return true;
     }
 
     private void showConfirmAlert(String s) {
@@ -76,7 +87,13 @@ public class loginControl {
         switch (message.getClass().getSimpleName()) {
             case "BooleanMessage" : {
                 if (((BooleanMessage) message).value) {
+                    Main.uName = uName;
                     showConfirmAlert("You have logged in successfully .");
+                    try {
+                        new PageLoader().load("mainPage");
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
                 } else {
                     WrongPass.setVisible(true);
                     clearTextFields();

@@ -52,10 +52,18 @@ public class MainPageControl implements Initializable {
     }
 
     public void refresh() {
+        if(!Connection.isOpen()) {
+            if(!Connection.connect())
+                return;
+        }
         Connection.send(new PostRefMessage(null));
-        Post[] refPosts = ((PostRefMessage) Connection.receive()).posts;
-        Arrays.sort(refPosts , (post1,post2) -> post1.localDateTime.compareTo(post2.localDateTime));
-        postObservableList.setAll(refPosts);
+        try {
+            Post[] refPosts = ((PostRefMessage) Connection.receive()).posts;
+            Arrays.sort(refPosts , (post1,post2) -> post1.localDateTime.compareTo(post2.localDateTime));
+            postObservableList.setAll(refPosts);
+        }catch (ClassCastException e) {
+            return;
+        }
     }
 
     public void searchPeople(ActionEvent actionEvent) throws IOException {

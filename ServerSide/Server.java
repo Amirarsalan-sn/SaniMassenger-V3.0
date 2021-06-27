@@ -77,11 +77,57 @@ public class Server implements Runnable {
                 send(new PostRefMessage(posts));
                 break;
             }
+            case "ReConnectMessage" : {
+                String uName = ((ReConnectMessage) currentMessage).uName;
+                this.currentPerson = Listener.unameToPass.get(uName);
+                loadList(currentPerson);
+                break;
+            }
+            case "DeleteAccMessage" : {
+                Listener.unameToPass.remove(currentPerson.uname);
+                return true;
+            }
+            case "ChangInfoMessage" : {
+                String newName = ((ChangeInfoMessage) currentMessage).name;
+                String newDate = ((ChangeInfoMessage) currentMessage).birthDate;
+                if(!newName.equals(""))
+                    currentPerson.name = newName;
+                if(!newDate.equals(""))
+                    currentPerson.birthDate = newDate;
+                break;
+            }
+            case "ProfileMessage" : {
+                ProfileMessage profileMessage = ((ProfileMessage) currentMessage);
+                Person profile = Listener.unameToPass.get(profileMessage.uname);
+                send(new ProfileMessage(null , profile));
+                break;
+            }
+            case "FollowMessage" : {
+                FollowMessage followMessage = ((FollowMessage) currentMessage);
+                Person followed = Listener.unameToPass.get(followMessage.uName);
+                if(followed != null) {
+                    currentPerson.addFollowingNames(followMessage.uName);
+                    followed.addFollowerNames(currentPerson.uname);
+                }
+                break;
+            }
+            case "UnfollowMessage" : {
+                UnfollowMessage unfollowMessage = ((UnfollowMessage) currentMessage);
+                Person unfollowed = Listener.unameToPass.get(unfollowMessage.uName);
+                if(unfollowed != null) {
+                    currentPerson.removeFollowingNames(unfollowed.uname);
+                    unfollowed.removeFollowingNames(currentPerson.uname);
+                } else {
+                    currentPerson.removeFollowerNames(unfollowMessage.uName);
+                    currentPerson.removeFollowingNames(unfollowMessage.uName);
+                }
+                break;
+            }
+            case "LogOutMessage" : {
+                return true;
+            }
             case "CheckMessage" : {
                 send(new CheckMessage());
-            }
-            case "CloseMessage": {
-                return true;
             }
         }
         return false;

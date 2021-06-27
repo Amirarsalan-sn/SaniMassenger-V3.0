@@ -6,6 +6,7 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.Initializable;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
@@ -22,7 +23,11 @@ import java.util.stream.Collectors;
 public class OtherProfilePageControl implements Initializable {
 
 
-
+    private static final String ERROR_TEXT = """
+            You are not connected to the server .
+            * Check your connection and use refresh icon .
+            * Close the Program and run it again .
+            """;
     public ImageView backIcon;
     public ImageView refreshIcon;
     public Label uName;
@@ -37,6 +42,7 @@ public class OtherProfilePageControl implements Initializable {
     private ObservableList<Post> postObservableList;
 
     private Person person ;
+    private boolean connected = true ;
 
 
     public OtherProfilePageControl(Person person) {
@@ -45,13 +51,6 @@ public class OtherProfilePageControl implements Initializable {
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
-        if(person.uname.equals(Main.uName)){
-            try {
-                new PageLoader().load("myProfileControl");
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
         postObservableList = FXCollections.observableArrayList();
         setItems();
         postList.setItems(postObservableList);
@@ -80,8 +79,16 @@ public class OtherProfilePageControl implements Initializable {
         return person.getFollowerNames().contains(Main.uName);
     }
 
-    public void back(MouseEvent mouseEvent) throws IOException {
-        new PageLoader().load("mainPage");
+    public void back(MouseEvent mouseEvent) {
+        back();
+    }
+
+    private void back()  {
+        try {
+            new PageLoader().load("mainPage");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     public void cursorToHand(MouseEvent mouseEvent) {
@@ -97,25 +104,58 @@ public class OtherProfilePageControl implements Initializable {
     }
 
     private void refresh() {
+        if(!Connection.isOpen()){
+            if(!Connection.connect()){
+                connected = false ;
+                return;
+            }
+        }
         Connection.send(new ProfileMessage(person.uname , null));
-        person = ((ProfileMessage) Connection.receive()).profile;
-        setItems();
+        try {
+            person = ((ProfileMessage) Connection.receive()).profile;
+            if(person != null) {
+                setItems();
+                connected = true;
+            } else {
+                showAlert("This account has been deleted .");
+                back();
+            }
+        }catch (ClassCastException e) {
+            connected = false;
+        }
     }
 
     public void follow(ActionEvent actionEvent) {
-        Connection.send(new FollowMessage(person.uname));
-        person.addFollowerNames(Main.uName);
-        followerNumber.setText(String.valueOf(person.getFollowersNumber()));
-        unfollowButton.setVisible(true);
-        followButton.setVisible(false);
+        if(checkConnection()) {
+            Connection.send(new FollowMessage(person.uname));
+            person.addFollowerNames(Main.uName);
+            followerNumber.setText(String.valueOf(person.getFollowersNumber()));
+            unfollowButton.setVisible(true);
+            followButton.setVisible(false);
+        }
+    }
+
+    private boolean checkConnection() {
+        if(connected)
+            return true;
+        showAlert(ERROR_TEXT);
+        return false;
+    }
+
+    private void showAlert(String errorText) {
+        Alert alert = new Alert(Alert.AlertType.ERROR);
+        alert.setContentText(errorText);
+        alert.show();
     }
 
     public void unfollow(ActionEvent actionEvent) {
-        Connection.send(new UnfollowMessage(person.uname));
-        person.removeFollowerNames(Main.uName);
-        followerNumber.setText(String.valueOf(person.getFollowersNumber()));
-        followButton.setVisible(true);
-        unfollowButton.setVisible(false);
+        if(checkConnection()) {
+            Connection.send(new UnfollowMessage(person.uname));
+            person.removeFollowerNames(Main.uName);
+            followerNumber.setText(String.valueOf(person.getFollowersNumber()));
+            followButton.setVisible(true);
+            unfollowButton.setVisible(false);
+        }
     }
 
     public void showFollowers(MouseEvent mouseEvent) throws IOException {
