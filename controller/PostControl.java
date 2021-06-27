@@ -15,6 +15,7 @@ import java.io.IOException;
 
 public class PostControl {
 
+    public static final String DISCONNECTED = "You are disconnected from the server .";
     public Label author;
     public Label postTitle;
     public Button repostButton;
@@ -45,8 +46,10 @@ public class PostControl {
 
 
     public void repost(ActionEvent actionEvent) {
-        Connection.send(new RepostMessage(Main.uName, post.author , post.localDateTime));
-        repostNumber.setText(String.valueOf(post.getReposts()));
+        if(Connection.send(new RepostMessage(Main.uName, post.author , post.localDateTime)) instanceof ErrorMessage)
+            showErrorAlert(DISCONNECTED);
+        else
+            repostNumber.setText(String.valueOf(post.getReposts()));
     }
 
     public void comment(ActionEvent actionEvent) throws IOException {
@@ -54,7 +57,9 @@ public class PostControl {
     }
 
     public void like(ActionEvent actionEvent) {
-        Connection.send(new LikeMessage(Main.uName , post.author , post.localDateTime));
+        if(Connection.send(new LikeMessage(Main.uName , post.author , post.localDateTime)) instanceof ErrorMessage)
+            showErrorAlert(DISCONNECTED);
+        else
         likeNumber.setText(String.valueOf(post.getLikes()));
     }
 
@@ -86,7 +91,7 @@ public class PostControl {
             else
                 showErrorAlert("The user you wanted to visit his(her) profile has deleted his(her) account .");
         }catch (ClassCastException e) {
-            showErrorAlert("You are disconnected from the server .");
+            showErrorAlert(DISCONNECTED);
         }
     }
 

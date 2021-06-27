@@ -1,9 +1,6 @@
 package controller;
 
-import Model.Connection;
-import Model.NewPostMessage;
-import Model.PageLoader;
-import Model.Post;
+import Model.*;
 import javafx.event.ActionEvent;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
@@ -76,8 +73,18 @@ public class NewPostPageControl {
 
     private void surePublish() {
         Post post = new Post(null , postTitle.getText() , postContext.getText());
-        Connection.send(new NewPostMessage(post));
-        clearTextFields();
+        if(Connection.send(new NewPostMessage(post)) instanceof ErrorMessage) {
+                showErrorAlert("Lost connection" , "You are not connected to the server . try again .");
+                refresh();
+        } else {
+            clearTextFields();
+        }
+    }
+
+    private void refresh() {
+        if(!Connection.isOpen()){
+            Connection.connect();
+        }
     }
 
     private void clearTextFields() {

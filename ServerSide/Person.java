@@ -3,6 +3,7 @@ package ServerSide;
 import Model.Post;
 
 import java.io.Serializable;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -67,5 +68,9 @@ public class Person implements Serializable {
 
     public List<Post> getPosts() {
         return new ArrayList<>(myPost);
+    }
+
+    public Post getPost(LocalDateTime localDateTime) {
+        return myPost.stream().filter(post -> post.localDateTime.equals(localDateTime)).findFirst().get();
     }
  }

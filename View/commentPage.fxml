@@ -19,11 +19,6 @@
                   <Image url="@../workSpace/Logo_images/arrow-back-icon.png" />
                </image>
             </ImageView>
-            <ImageView fitHeight="34.0" fitWidth="35.0" layoutX="411.0" layoutY="14.0" onMouseClicked="#refresh" onMouseEntered="#cursorToHand" onMouseExited="#cursorToDefault" pickOnBounds="true" preserveRatio="true">
-               <image>
-                  <Image url="@../workSpace/Logo_images/icons8-synchronize-48.png" />
-               </image>
-            </ImageView>
             <Button layoutX="175.0" layoutY="259.0" mnemonicParsing="false" onAction="#comment" onMouseEntered="#cursorToHand" onMouseExited="#cursorToDefault" prefHeight="47.0" prefWidth="110.0" style="-fx-background-color: #a1890f;" text="Comment" textFill="WHITE">
                <font>
                   <Font name="System Bold" size="17.0" />
